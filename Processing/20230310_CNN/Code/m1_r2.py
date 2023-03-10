@@ -18,7 +18,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 import os
 import torch
 
-torch.set_num_threads(5)
+torch.set_num_threads(25)
 os.makedirs('../Results/'+model+'_'+model_run+'/', exist_ok = True)
 
 df = pd.read_csv('../Data/1ADQ_train.tsv', sep='\t')
