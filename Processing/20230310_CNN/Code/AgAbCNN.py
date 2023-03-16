@@ -134,11 +134,13 @@ class CNNModel(pl.LightningModule):
         x = self.pool(x)
         x = self.flat(x)
         x = self.act1(self.fc1(x))
-        x = self.act2(self.fc2(x))
+        # x = self.act2(self.fc2(x))
+        x = self.fc2(x)
         return x
     
     def loss_fn(self, y_hat, y):
-        return nn.BCELoss()(y_hat, y)
+        # return nn.BCELoss()(y_hat, y)
+        return F.binary_cross_entropy_with_logits(y_hat, y)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -150,7 +152,8 @@ class CNNModel(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.loss_fn(y_hat.flatten(), y.float())
-        fpr, tpr, thresholds = roc_curve(y, y_hat)
+        # fpr, tpr, thresholds = roc_curve(y, y_hat)
+        fpr, tpr, thresholds = roc_curve(y, torch.sigmoid(y_hat))
         roc_auc = auc(fpr, tpr)
         self.log('valid_loss', loss)
         self.log('roc auc', roc_auc)
@@ -168,7 +171,8 @@ class CNNModel(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.loss_fn(y_hat.flatten(), y.float())
-        fpr, tpr, thresholds = roc_curve(y, y_hat)
+        # fpr, tpr, thresholds = roc_curve(y, y_hat)
+        fpr, tpr, thresholds = roc_curve(y, torch.sigmoid(y_hat))
         roc_auc = auc(fpr, tpr)
         return y_hat, y
 
